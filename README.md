@@ -19,5 +19,5 @@ In a nutshell, eiSoil solves problems when implementing test-bed orchestration s
 
 # Documentation
 
-Before you do anything else, please checkout the [Quickstart](https://raw.github.com/eict/eiSoil/doc/eiSoil%20Quickstart.pdf)
+Before you do anything else, please checkout the [Quickstart](https://raw.github.com/eict/eiSoil/master/doc/eiSoil%20Quickstart.pdf)
 Please see the [Wiki](https://github.com/eict/eiSoil/wiki) for more information.
