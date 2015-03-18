@@ -179,7 +179,7 @@ class GENIv3Handler(xmlrpc.Dispatcher):
 
     # ---- helper methods
 
-    def naiveUTC(dt):
+    def _naiveUTC(self, dt):
         """
         Converts dt to a naive datetime in UTC.
         if 'dt' has a timezone then
@@ -192,19 +192,19 @@ class GENIv3Handler(xmlrpc.Dispatcher):
             dt = dt.replace(tzinfo=None)
         return dt
 
-    def rfc3339format(dt):
+    def _rfc3339format(self, dt):
         """
         Return a string representing the given datetime in rfc3339 format.
         """
         # Add UTC TZ, to have an RFC3339 compliant datetime, per the AM API
-        naiveUTC(dt)
+        self._naiveUTC(dt)
         time_with_tz = dt.replace(tzinfo=dateutil.tz.tzutc())
         d1 = time_with_tz.isoformat()
         return time_with_tz.isoformat()
 
     def _datetime2str(self, dt):
         #return dt.strftime(self.RFC3339_FORMAT_STRING)
-        return rfc3339format(dt)
+        return self._rfc3339format(dt)
 
     def _str2datetime(self, strval):
         """Parses the given date string and converts the timestamp to utc and the date unaware of timezones."""
