@@ -96,7 +96,7 @@ class GENIv3Handler(xmlrpc.Dispatcher):
         try:
             self._checkRSpecVersion(options['geni_rspec_version'])
             result = self._delegate.describe(urns, self.requestCertificate(), credentials)
-            self._convertExpiresDate(result['geni_slivers'])
+            result['geni_slivers'] = self._convertExpiresDate(result['geni_slivers'])
         except Exception as e:
             return self._errorReturn(e)
 
