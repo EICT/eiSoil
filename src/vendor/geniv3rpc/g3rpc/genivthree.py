@@ -3,6 +3,7 @@ import urllib2
 import traceback
 from datetime import datetime
 from dateutil import parser as dateparser
+import dateutil
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -95,6 +96,7 @@ class GENIv3Handler(xmlrpc.Dispatcher):
         try:
             self._checkRSpecVersion(options['geni_rspec_version'])
             result = self._delegate.describe(urns, self.requestCertificate(), credentials)
+            self._convertExpiresDate(result['geni_slivers'])
         except Exception as e:
             return self._errorReturn(e)
 
@@ -176,8 +178,34 @@ class GENIv3Handler(xmlrpc.Dispatcher):
 
 
     # ---- helper methods
+
+    def naiveUTC(dt):
+        """
+        Converts dt to a naive datetime in UTC.
+        if 'dt' has a timezone then
+        convert to UTC
+        strip off timezone (make it "naive" in Python parlance)
+        """
+        if dt.tzinfo:
+            tz_utc = dateutil.tz.tzutc()
+            dt = dt.astimezone(tz_utc)
+            dt = dt.replace(tzinfo=None)
+        return dt
+
+    def rfc3339format(dt):
+        """
+        Return a string representing the given datetime in rfc3339 format.
+        """
+        # Add UTC TZ, to have an RFC3339 compliant datetime, per the AM API
+        naiveUTC(dt)
+        time_with_tz = dt.replace(tzinfo=dateutil.tz.tzutc())
+        d1 = time_with_tz.isoformat()
+        return time_with_tz.isoformat()
+
     def _datetime2str(self, dt):
-        return dt.strftime(self.RFC3339_FORMAT_STRING)
+        #return dt.strftime(self.RFC3339_FORMAT_STRING)
+        return rfc3339format(dt)
+
     def _str2datetime(self, strval):
         """Parses the given date string and converts the timestamp to utc and the date unaware of timezones."""
         result = dateparser.parse(strval)
